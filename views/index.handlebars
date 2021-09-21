@@ -1,0 +1,6 @@
+<h1>Hello {{title}}</h1>
+{{#if unauthenticated}}
+    <a href='/login'>Login</a>
+{{else}}
+    <a href='/profile/{{userid}}'>Profile</a>
+{{/if}}
