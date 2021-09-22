@@ -1,0 +1,7 @@
+<h1>Hello {{username}}</h1>
+<h2>Your uploaded LaTeX:</h2>
+{{#each latex}}
+{{{this.tex}}}
+<p>{{{this.description}}}</p>
+
+{{/each}}

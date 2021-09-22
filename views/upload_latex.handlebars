@@ -1,0 +1,11 @@
+<h1>Input LaTeX to Upload</h1>
+<p>For supported inputs, go to the <a href="https://katex.org/docs/supported.html">KaTeX docs</a>.</p>
+
+<form action="/upload/latex" method="POST">
+    <label for="latex">LaTeX:</label>
+    <textarea id="latex" name="latex">% Enter LaTeX here. (Hint: use \text{} to enter normal type.)</textarea>
+    <br>
+    <label for="description">Description of LaTeX:</label>
+    <input type="text" id="description" name="description">
+    <input type="submit" value="Submit">
+</form>

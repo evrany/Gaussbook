@@ -66,7 +66,7 @@ router.post('/register', function(req, res, next) {
 
 /* POST authenticate */
 router.post('/authenticate', function(req, res, next) {
-    console.log('here45353');
+    //console.log('here45353');
     if (req.body.username.length > 0 && req.body.password.length > 0) {
         // intentionally vulnerable to SQLi
         var sql = 'SELECT * FROM user WHERE username = \'' + req.body.username + '\' and password = \'' + md5(req.body.password) + '\'';
@@ -79,6 +79,7 @@ router.post('/authenticate', function(req, res, next) {
 
                 req.session.userid = result.id;
                 req.session.username = result.username;
+                req.session.nick = result.nick;
                 res.redirect('/');
             }
         })
@@ -94,7 +95,8 @@ router.get('/profile/:userid', function(req, res, next) {
             return;
         } else {
             res.render('profile', {
-                username: results.username
+                username: results.username,
+                userid: req.params.userid
             });
         }
     })
@@ -113,5 +115,53 @@ router.get('/logout', function(req, res, next) {
         res.redirect('/');
     });
 })
+
+router.get('/upload/latex', function(req, res, next) {
+    res.render('upload_latex');
+})
+
+router.post('/upload/latex', function(req, res, next) {
+    var sql = 'INSERT INTO latex (user_id, tex, description) VALUES (?,?,?)';
+    var values = [req.session.userid, req.body.latex, req.body.description];
+    db.get(sql, values, function(err, row) {
+        res.redirect('/profile/' + req.session.userid + '/latex');
+    })
+})
+
+router.get('/profile/:userid/latex', function(req, res, next) {
+    var sql = 'SELECT * FROM latex WHERE user_id = ?';
+    db.all(sql, req.params.userid, function(err, rows) {
+        console.log(rows);
+
+        parseRows(rows);
+        res.render('profile_latex', {
+            username: req.session.username,
+            latex: rows
+        })
+    })
+})
+
+function parseRows(rows) {
+    for (let i = 0; i < rows.length; i++) {
+        rows[i].tex = parseLatex(rows[i].tex);
+    }
+}
+
+function parseLatex(tex) {
+    var html = '';
+    try {
+        html = katex.renderToString(tex);
+    } catch (e) {
+        if (e instanceof katex.ParseError) {
+            // KaTeX can't parse the expression
+            html = ("Error in LaTeX '" + texString + "': " + e.message)
+                //.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                // uncomment above to stop XSS in LaTeX
+        } else {
+            throw e; // other error
+        }
+    }
+    return html;
+}
 
 module.exports = router;
