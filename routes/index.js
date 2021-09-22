@@ -3,16 +3,22 @@ const createHttpError = require('http-errors');
 const md5 = require('md5');
 var router = express.Router();
 var db = require('../database.js');
+const katex = require('katex');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log('userid = ' + req.session.userid);
     var isAuthenticated = !(req.session.userid === undefined);
-    console.log('isAuthenticated = ' + isAuthenticated);
+
+    //katex test
+    var test = katex.renderToString("\\text{Let }\\varepsilon < 0.");
+
+    //console.log('userid = ' + req.session.userid);
+    //console.log('isAuthenticated = ' + isAuthenticated);
     res.render('index', {
         unauthenticated: !isAuthenticated,
         title: req.query.name,
-        userid: req.session.userid
+        userid: req.session.userid,
+        latex: test
     });
 
 });
