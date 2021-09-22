@@ -53,12 +53,7 @@ router.post('/register', function(req, res, next) {
             createHttpError(err);
             return;
         }
-        /*
-        userid = this.lastID;
-        req.session.userid = userid;
-        req.session.username = req.body.username;
-        res.render('index', { title: req.session.username });
-        */
+
     });
 
 });
@@ -78,7 +73,7 @@ router.post('/authenticate', function(req, res, next) {
 
                 req.session.userid = result.id;
                 req.session.username = result.username;
-                res.render('index', { title: req.session.username });
+                res.redirect('/');
             }
         })
     }
@@ -98,5 +93,19 @@ router.get('/profile/:userid', function(req, res, next) {
         }
     })
 });
+
+router.get('/profile', function(req, res, next) {
+    if (req.session.userid) {
+        res.redirect('/profile/' + req.session.userid);
+    } else {
+        res.redirect('/login');
+    }
+})
+
+router.get('/logout', function(req, res, next) {
+    req.session.destroy(function(err) {
+        res.redirect('/');
+    });
+})
 
 module.exports = router;
