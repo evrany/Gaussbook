@@ -1,4 +1,5 @@
-<h1>Recieved messages:</h1>
+<h1>Hello {{title}}</h1>
+<h2>Recieved messages:</h2>
 {{#each message_array}}
 {{#if this.recieved}}
 <p><b>Message from {{this.from_username}}.</b></p>
@@ -12,7 +13,7 @@
 <p>{{this.comment}}</p>
 <br>
 {{/if}}
-<h1>Sent messages:</h1>
+<h2>Sent messages:</h2>
 {{#if this.sent}}
 <p><b>Message to {{this.to_username}}.</b></p>
 <br>
@@ -26,3 +27,4 @@
 <br>
 {{/if}}
 {{/each}}
+<a href="/profile/{{userid}}">Profile.</a>

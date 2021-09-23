@@ -216,7 +216,7 @@ router.get('/profile/:userid/messages', function(req, res, next) {
     db.each(sql, values, function(err, row) {
         // runs for each row
         messages.push({
-            id: row.id,
+            message_id: row.id,
             comment: row.comment,
             sent: (Number(req.params.userid) === row.from_id),
             recieved: (Number(req.params.userid) === row.to_id),
@@ -231,7 +231,11 @@ router.get('/profile/:userid/messages', function(req, res, next) {
     }, function(err, number) {
         // runs after all row callbacks
         if (err) console.error(err);
-        res.render('view_messages', { message_array: messages });
+        res.render('view_messages', {
+            userid: req.session.userid,
+            title: req.session.username,
+            message_array: messages
+        });
     });
 })
 
