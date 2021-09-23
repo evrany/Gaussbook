@@ -31,14 +31,14 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
             });
         db.run(`CREATE TABLE latex(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id text,
+            user_id integer,
             tex text,
             description text,
             FOREIGN KEY(user_id) REFERENCES user(id)
         )`,
             (err) => {
                 if (err) {
-                    console.error(err);
+                    //console.error(err);
                 } else {
                     console.log('Table "latex" created.');
                 }
@@ -55,7 +55,7 @@ let db = new sqlite3.Database(DBSOURCE, (err) => {
         )`,
             (err) => {
                 if (err) {
-                    console.error(err);
+                    //console.error(err);
                 } else {
                     console.log('Table "message" created.')
                 }

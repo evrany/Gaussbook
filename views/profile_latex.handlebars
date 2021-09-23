@@ -1,7 +1,8 @@
 <h1>Hello {{username}}</h1>
+<a href="/profile/{{userid}}">Profile</a>
 <h2>Your uploaded LaTeX:</h2>
 {{#each latex}}
 {{{this.tex}}}
-<p>{{{this.description}}}</p>
+<p><i>{{{this.description}}}</i></p>
 
 {{/each}}

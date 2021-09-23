@@ -1,0 +1,26 @@
+<h1>Send your favorite cursed math to your friends!<h1>
+<p></p>
+<form action="/profile/message" method="POST">
+    <input type="hidden" id="from_id" name="from_id" value={{from_id}}>
+    <label for="to_id">Recipient:</label>
+    <select id="to_id" name="to_id">
+        {{#each user}}
+            <option value={{this.id}}>{{this.username}}</option>
+        {{/each}}
+    </select>
+    <br>
+    <label for="latex_id">Select which math to send:</label>
+    <br>
+    {{#each latex}}
+        <input type="radio" id="{{this.id}}" name="latex_id" value="{{this.id}}">
+        <label for="{{this.id}}">
+            {{{this.tex}}}
+            <br>
+            <p><i>{{this.description}}</i></p>
+        </label>
+        <br>
+    {{/each}}
+    <label for="comment">Add any additional remarks:</label>
+    <input type="text" id="comment" name="comment">
+    <input type="submit" value="Send message">
+</form>

@@ -1,0 +1,28 @@
+<h1>Recieved messages:</h1>
+{{#each message_array}}
+{{#if this.recieved}}
+<p><b>Message from {{this.from_username}}.</b></p>
+<br>
+{{{this.tex}}}
+<br>
+<p><i>{{{this.description}}}</i></p>
+<br>
+<p><b>{{this.from_nick}}'s comment:</b></p>
+<br>
+<p>{{this.comment}}</p>
+<br>
+{{/if}}
+<h1>Sent messages:</h1>
+{{#if this.sent}}
+<p><b>Message to {{this.to_username}}.</b></p>
+<br>
+{{{this.tex}}}
+<br>
+<p><i>{{{this.description}}}</i></p>
+<br>
+<p><b>Your comment:</b></p>
+<br>
+<p>{{this.comment}}</p>
+<br>
+{{/if}}
+{{/each}}

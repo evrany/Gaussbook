@@ -50,16 +50,16 @@ router.post('/register', function(req, res, next) {
     }
 
     // intentionally vulnerable to SQLi
-    var sql = 'INSERT INTO user (username, password) VALUES(\'' + req.body.username + '\',\'' + md5(req.body.password) + '\')';
+    var sql = 'INSERT INTO user (username, password, nick) VALUES(\'' + req.body.username + '\',\'' + md5(req.body.password) + '\',\'' + req.body.nick + '\')';
     db.run(sql, function(err, result) {
-        console.log('here234123');
-        console.log(err);
+        //console.log('here234123');
+        //console.log(err);
         if (err) {
-            console.log('here3485938');
+            console.log(err);
             createHttpError(err);
             return;
         }
-
+        res.redirect('/login');
     });
 
 });
@@ -76,11 +76,15 @@ router.post('/authenticate', function(req, res, next) {
                 createHttpError(err);
                 return;
             } else {
+                if (typeof result === 'undefined') {
+                    res.redirect('/login');
+                    return;
+                }
 
                 req.session.userid = result.id;
                 req.session.username = result.username;
                 req.session.nick = result.nick;
-                res.redirect('/');
+                res.redirect('/profile/' + req.session.userid);
             }
         })
     }
@@ -133,15 +137,105 @@ router.get('/profile/:userid/latex', function(req, res, next) {
     db.all(sql, req.params.userid, function(err, rows) {
         console.log(rows);
 
-        parseRows(rows);
+        parseLatexRows(rows);
         res.render('profile_latex', {
+            userid: req.session.userid,
             username: req.session.username,
             latex: rows
         })
     })
 })
 
-function parseRows(rows) {
+router.get('/profile/:userid/message', function(req, res, next) {
+    if (req.session.userid != req.params.userid) {
+        res.redirect('/login');
+        return;
+    }
+    var sql = 'SELECT * FROM user WHERE id != ?';
+    var values = [req.session.userid];
+    db.all(sql, values, function(user_err, user_rows) {
+        if (user_err) {
+            console.error(user_err);
+        }
+        sql = 'SELECT * FROM latex WHERE user_id = ?';
+        values = [req.session.userid];
+        db.all(sql, values, function(latex_err, latex_rows) {
+            if (user_err) {
+                console.error(latex_err);
+            }
+
+            parseLatexRows(latex_rows);
+
+            res.render('message', {
+                from_id: req.session.userid,
+                user: user_rows,
+                latex: latex_rows
+            });
+        })
+    })
+})
+
+router.post('/profile/message', function(req, res, next) {
+    var sql = 'INSERT INTO message (from_id, to_id, latex_id, comment) values (?,?,?,?)';
+    var values = [req.body.from_id, req.body.to_id, req.body.latex_id, req.body.comment];
+    db.get(sql, values, function(err, row) {
+        res.redirect('/profile/' + req.body.from_id);
+    })
+})
+
+router.get('/profile/:userid/messages', function(req, res, next) {
+    if (req.session.userid != req.params.userid) {
+        res.redirect('/login');
+        return;
+    }
+    var messages = [];
+
+    var sql = `
+        SELECT message.id,
+        message.comment,
+        message.from_id,
+        from_user.username as from_username,
+        from_user.nick as from_nick,
+        message.to_id,
+        to_user.username as to_user,
+        to_user.nick as to_nick,
+        latex.tex,
+        latex.description
+        FROM message
+        JOIN user from_user
+            ON message.from_id = from_user.id
+        JOIN user to_user
+            ON message.to_id = to_user.id
+        JOIN latex
+            ON message.latex_id = latex.id
+        WHERE message.from_id = ? OR message.to_id = ?`;
+
+    sql = sql.replace(/[\r\n]+/gm, "");
+    var values = [req.params.userid, req.params.userid];
+
+    db.each(sql, values, function(err, row) {
+        // runs for each row
+        messages.push({
+            id: row.id,
+            comment: row.comment,
+            sent: (Number(req.params.userid) === row.from_id),
+            recieved: (Number(req.params.userid) === row.to_id),
+            from_username: row.from_username,
+            from_nick: row.from_nick,
+            to_username: row.to_user,
+            to_nick: row.to_nick,
+            tex: parseLatex(row.tex),
+            description: row.description
+        })
+
+    }, function(err, number) {
+        // runs after all row callbacks
+        if (err) console.error(err);
+        res.render('view_messages', { message_array: messages });
+    });
+})
+
+function parseLatexRows(rows) {
     for (let i = 0; i < rows.length; i++) {
         rows[i].tex = parseLatex(rows[i].tex);
     }
