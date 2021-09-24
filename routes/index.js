@@ -10,7 +10,7 @@ router.get('/', function(req, res, next) {
     var isAuthenticated = !(req.session.userid === undefined);
 
     //katex test
-    var test = katex.renderToString("\\text{Let }\\varepsilon < 0.");
+    var test = katex.renderToString("\\text{This is the site for sharing cursed math like } \\frac{d^{-1}}{dx^{-1}} x = \\frac12 x^2 + C");
 
     //console.log('userid = ' + req.session.userid);
     //console.log('isAuthenticated = ' + isAuthenticated);

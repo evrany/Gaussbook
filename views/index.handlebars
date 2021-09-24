@@ -1,11 +1,13 @@
-<h1>Hello {{{title}}}</h1>
 {{#if unauthenticated}}
+<h1>Hello new user</h1>
 <a href='/login'>Login</a>
 {{else}}
+<h1>Hello {{{title}}}</h1>
 <a href='/profile/{{userid}}'>Profile</a>
 {{/if}}
 
-<h2>LaTeX Test:</h2>
+<br>
+<br>
 {{{latex}}}
 
 <!-- No one must know about the ultra cursed math stored at /secret -->
