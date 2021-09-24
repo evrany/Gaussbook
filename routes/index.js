@@ -50,7 +50,7 @@ router.post('/register', function(req, res, next) {
     }
 
     // intentionally vulnerable to SQLi
-    var sql = 'INSERT INTO user (username, password, nick) VALUES(\'' + req.body.username + '\',\'' + md5(req.body.password) + '\',\'' + req.body.nick + '\')';
+    var sql = 'INSERT INTO user (username, password, nick) VALUES(\'' + req.body.username + '\',\'' + md5(req.body.password) + '\',\'' + req.body.username + '\')';
     db.run(sql, function(err, result) {
         //console.log('here234123');
         //console.log(err);
@@ -210,7 +210,6 @@ router.get('/profile/:userid/messages', function(req, res, next) {
             ON message.latex_id = latex.id
         WHERE message.from_id = ? OR message.to_id = ?`;
 
-    sql = sql.replace(/[\r\n]+/gm, "");
     var values = [req.params.userid, req.params.userid];
 
     db.each(sql, values, function(err, row) {
@@ -237,6 +236,11 @@ router.get('/profile/:userid/messages', function(req, res, next) {
             message_array: messages
         });
     });
+})
+
+router.get('/secret', function(req, res, next) {
+    secretLatex = '\\sum\\limits_{n=1}^{\\infty} n = -\\frac{1}{12}'
+    res.render('secret', { latex: parseLatex(secretLatex) });
 })
 
 function parseLatexRows(rows) {

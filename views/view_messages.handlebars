@@ -1,4 +1,5 @@
 <h1>Hello {{title}}</h1>
+<a href="/profile/{{userid}}">Profile.</a>
 <h2>Recieved messages:</h2>
 {{#each message_array}}
 {{#if this.recieved}}
@@ -13,18 +14,17 @@
 <p>{{this.comment}}</p>
 <br>
 {{/if}}
+{{/each}}
 <h2>Sent messages:</h2>
+{{#each message_array}}
 {{#if this.sent}}
-<p><b>Message to {{this.to_username}}.</b></p>
+<p><b>Message to {{this.to_username}}:</b></p>
 <br>
 {{{this.tex}}}
-<br>
-<p><i>{{{this.description}}}</i></p>
+<p>{{{this.description}}}</p>
 <br>
 <p><b>Your comment:</b></p>
-<br>
-<p>{{this.comment}}</p>
+<p>{{{this.comment}}}</p>
 <br>
 {{/if}}
 {{/each}}
-<a href="/profile/{{userid}}">Profile.</a>
