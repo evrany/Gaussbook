@@ -135,7 +135,7 @@ router.post('/upload/latex', function(req, res, next) {
 router.get('/profile/:userid/latex', function(req, res, next) {
     var sql = 'SELECT * FROM latex WHERE user_id = ?';
     db.all(sql, req.params.userid, function(err, rows) {
-        console.log(rows);
+        //console.log(rows);
 
         parseLatexRows(rows);
         res.render('profile_latex', {
